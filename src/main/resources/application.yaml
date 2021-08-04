@@ -1,0 +1,43 @@
+spring:
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 20
+        jdbc.batch_size: 20
+  datasource:
+    # ImMemory
+    url: jdbc:h2:mem:locator
+    #    tcp: jdbc:h2:tcp://localhost:9092/mem:locator
+    # Relative path form current dir
+    #    url: jdbc:h2:./db/locator
+    # Relative path from home
+    #    url: jdbc:h2:~/locator
+    #    tcp: jdbc:h2:tcp://localhost:9092/~/locator
+    username: admin
+    password: 12345
+  h2.console.enabled: true
+
+  security:
+    user:
+      name: user
+      password: password
+      roles: USER
+
+logging:
+  level:
+    root: WARN
+    com.atanava.locator: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
+
+# Jackson Serialization Issue Resolver
+#  jackson:
+#    visibility.field: any
+#    visibility.getter: none
+#    visibility.setter: none
+#    visibility.is-getter: none
