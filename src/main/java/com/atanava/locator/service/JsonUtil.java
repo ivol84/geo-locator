@@ -1,4 +1,4 @@
-package com.atanava.locator.service;
+package com.atanava.locator.utils;
 
 import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
@@ -27,6 +27,23 @@ public class JsonUtil {
 			points.add(point);
 		});
 		return points;
+	}
+
+	public static ArrayNode getConverted(ArrayNode source, String format) {
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode converted = mapper.createArrayNode();
+		source.forEach(jsonNode -> {
+			ObjectNode node = mapper.createObjectNode();
+			PointId pointId = getPointId(jsonNode, format);
+			node.put(LATITUDE, pointId.getLatitude());
+			node.put(LONGITUDE, pointId.getLongitude());
+			node.set(DISPLAY_NAME, jsonNode.findValue(DISPLAY_NAME));
+			if (jsonNode.findValue(ADDRESS) != null) {
+				node.set(ADDRESS, jsonNode.findValue(ADDRESS));
+			}
+			converted.add(node);
+		});
+		return converted;
 	}
 
 	private static PointId getPointId(JsonNode node, String format) {
