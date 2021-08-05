@@ -14,50 +14,60 @@ import static com.atanava.locator.service.OsmConstants.*;
 
 public class JsonUtil {
 
-	public static Set<Point> getPoints(ArrayNode source, String format) {
-		ArrayNode tmp = (GEO_JSON.equals(format) || GEOCODE_JSON.equals(format))
-				? (ArrayNode) source.findValue(FEATURES)
-				: source;
+    public static Set<Point> getPoints(ArrayNode source, String format) {
+        source = normalize(source, format);
+        Set<Point> points = new HashSet<>();
+        source.forEach(jsonNode -> {
+            PointId pointId = getPointId(jsonNode, format);
+            Point point = new Point(pointId, new HashSet<>());
+            point.getOsmIds()
+                    .add(jsonNode.findValue(OSM_TYPE)
+                            .asText()
+                            .substring(0, 1)
+                            .toUpperCase() +
+                            jsonNode.findValue(OSM_ID).asText());
+            points.add(point);
+        });
+        return points;
+    }
 
-		Set<Point> points = new HashSet<>();
-		tmp.forEach(j -> {
-			PointId pointId = getPointId(j, format);
-			Point point = new Point(pointId, new HashSet<>());
-			point.getOsmIds().add(j.findValue(OSM_TYPE).asText().substring(0,1).toUpperCase() + j.findValue(OSM_ID).asText());
-			points.add(point);
-		});
-		return points;
-	}
+    public static ArrayNode getConverted(ArrayNode source, String format) {
+        source = normalize(source, format);
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode converted = mapper.createArrayNode();
 
-	public static ArrayNode getConverted(ArrayNode source, String format) {
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode converted = mapper.createArrayNode();
-		source.forEach(jsonNode -> {
-			ObjectNode node = mapper.createObjectNode();
-			PointId pointId = getPointId(jsonNode, format);
-			node.put(LATITUDE, pointId.getLatitude());
-			node.put(LONGITUDE, pointId.getLongitude());
-			node.set(DISPLAY_NAME, jsonNode.findValue(DISPLAY_NAME));
-			if (jsonNode.findValue(ADDRESS) != null) {
-				node.set(ADDRESS, jsonNode.findValue(ADDRESS));
-			}
-			converted.add(node);
-		});
-		return converted;
-	}
+        source.forEach(jsonNode -> {
+            ObjectNode node = mapper.createObjectNode();
+            PointId pointId = getPointId(jsonNode, format);
+            node.put(LATITUDE, pointId.getLatitude());
+            node.put(LONGITUDE, pointId.getLongitude());
+            node.set(DISPLAY_NAME, GEOCODE_JSON.equals(format) ? jsonNode.findValue(LABEL) : jsonNode.findValue(DISPLAY_NAME));
+            if (jsonNode.findValue(ADDRESS) != null) {
+                node.set(ADDRESS, jsonNode.findValue(ADDRESS));//TODO implement for geocodejson too
+            }
+            converted.add(node);
+        });
+        return converted;
+    }
 
-	private static PointId getPointId(JsonNode node, String format) {
-		PointId pointId;
-		switch (format) {
-			case JSON, JSON_V2 -> {
-				pointId = new PointId(node.findValue(LATITUDE).asDouble(), node.findValue(LONGITUDE).asDouble());
-			}
-			case GEO_JSON, GEOCODE_JSON -> {
-				ArrayNode coordinates = (ArrayNode) node.findValue(COORDINATES);
-				pointId = new PointId(coordinates.get(0).asDouble(), coordinates.get(1).asDouble());
-			}
-			default -> throw new IllegalStateException("Unexpected value: " + format);
-		}
-		return pointId;
-	}
+    private static ArrayNode normalize(ArrayNode source, String format) {
+        return (GEO_JSON.equals(format) || GEOCODE_JSON.equals(format))
+                ? (ArrayNode) source.findValue(FEATURES)
+                : source;
+    }
+
+    private static PointId getPointId(JsonNode node, String format) {
+        PointId pointId;
+        switch (format) {
+            case JSON, JSON_V2 -> {
+                pointId = new PointId(node.findValue(LATITUDE).asDouble(), node.findValue(LONGITUDE).asDouble());
+            }
+            case GEO_JSON, GEOCODE_JSON -> {
+                ArrayNode coordinates = (ArrayNode) node.findValue(COORDINATES);
+                pointId = new PointId(coordinates.get(0).asDouble(), coordinates.get(1).asDouble());
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + format);
+        }
+        return pointId;
+    }
 }

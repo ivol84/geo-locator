@@ -1,4 +1,4 @@
-package com.atanava.locator.cache;
+package com.atanava.locator.service.cache;
 
 import lombok.*;
 

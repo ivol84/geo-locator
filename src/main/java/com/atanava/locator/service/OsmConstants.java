@@ -11,6 +11,7 @@ public class OsmConstants {
     public static final String GEO_JSON = "geojson";
     public static final String GEOCODE_JSON = "geocodejson";
     public static final String DISPLAY_NAME = "display_name";
+    public static final String LABEL = "label";
     public static final String ADDRESS = "address";
     public static final String ADDR_DETAILS = "addressdetails=1";
     public static final String FEATURES = "features";

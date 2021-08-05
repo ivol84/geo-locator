@@ -1,8 +1,8 @@
 package com.atanava.locator.config;
 
-import com.atanava.locator.cache.MultiThreadRatingCache;
-import com.atanava.locator.cache.RatingCache;
-import com.atanava.locator.cache.SingleThreadRatingCache;
+import com.atanava.locator.service.cache.MultiThreadRatingCache;
+import com.atanava.locator.service.cache.RatingCache;
+import com.atanava.locator.service.cache.SingleThreadRatingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

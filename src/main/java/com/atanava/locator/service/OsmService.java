@@ -1,6 +1,6 @@
 package com.atanava.locator.service;
 
-import com.atanava.locator.cache.RatingCache;
+import com.atanava.locator.service.cache.RatingCache;
 import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
 import com.atanava.locator.repository.PointRepository;

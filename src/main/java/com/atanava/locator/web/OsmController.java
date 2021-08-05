@@ -33,6 +33,8 @@ public class OsmController {
 												  @RequestParam(required = false) String postalcode,
 												  @RequestParam(required = false) Integer addressdetails,
 												  @RequestParam(required = false) String format) {
+
+		format = getFormatOrDefault(format);
 		ArrayNode created;
 		if (q != null) {
 			log.info("Create coordinates for address: {}", q);
@@ -45,9 +47,7 @@ public class OsmController {
 							COUNTRY + country1,
 							STATE + state,
 							COUNTRY + country2,
-							POSTAL_CODE + postalcode),
-					addressdetails,
-					format == null ? JSON : format);
+							POSTAL_CODE + postalcode), addressdetails, format);
 		}
 		return new ResponseEntity<>(created, HttpStatus.OK);
 	}
@@ -57,9 +57,12 @@ public class OsmController {
 												  @RequestParam(required = false) Integer addressdetails,
 												  @RequestParam(required = false) String format) {
 		log.info("Get addresses for coordinates: {}, {}", latitude, longitude);
-		ArrayNode fetched = osmService.get(latitude, longitude, addressdetails, format == null ? JSON : format);
+		ArrayNode fetched = osmService.get(latitude, longitude, addressdetails, getFormatOrDefault(format));
 
 		return new ResponseEntity<>(fetched, HttpStatus.OK);
 	}
 
+	private String getFormatOrDefault(String format) {
+		return (JSON_V2.equals(format) || GEO_JSON.equals(format) || GEOCODE_JSON.equals(format)) ? format : JSON;
+	}
 }
