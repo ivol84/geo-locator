@@ -29,6 +29,17 @@ spring:
       password: password
       roles: USER
 
+  profiles:
+    active: multi-thread
+#    active: single-thread
+
+custom.cache:
+  lifetime: 60_000
+  rating: 10
+  batchsize: 1000
+  usegc: true
+
+
 logging:
   level:
     root: WARN

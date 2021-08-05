@@ -53,11 +53,11 @@ public class OsmController {
 	}
 
 	@GetMapping("/lookup")
-	public ResponseEntity<ArrayNode> getAddresses(double lat, double lon,
+	public ResponseEntity<ArrayNode> getAddresses(double latitude, double longitude,
 												  @RequestParam(required = false) Integer addressdetails,
 												  @RequestParam(required = false) String format) {
-		log.info("Get addresses for coordinates: {}, {}", lat, lon);
-		ArrayNode fetched = osmService.get(lat, lon, addressdetails, format == null ? JSON : format);
+		log.info("Get addresses for coordinates: {}, {}", latitude, longitude);
+		ArrayNode fetched = osmService.get(latitude, longitude, addressdetails, format == null ? JSON : format);
 
 		return new ResponseEntity<>(fetched, HttpStatus.OK);
 	}

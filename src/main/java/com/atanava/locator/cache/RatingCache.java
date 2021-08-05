@@ -1,9 +1,6 @@
 package com.atanava.locator.cache;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.Deque;
@@ -13,23 +10,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RequiredArgsConstructor
-public abstract class AbstractCache<K, V> implements Cache<K, V> {
-	protected final Map<K, CompositeValue> innerMap;
-	protected final Deque<CompositeKey> keysByAddingOrder;
-	protected final long entryLifeTime;
-	protected final AtomicReference<Date> lastEvicted;
-	private final Runtime runtime;
-	@Getter
-	@Setter
-	protected volatile int minRating = 10;
-	@Getter
-	@Setter
-	protected volatile int batchSize = 1000;
-	@Getter
-	@Setter
-	private volatile boolean useGC = true;
+public abstract class RatingCache<K, V> {
+	@NonNull
+	protected Map<K, CompositeValue> innerMap;
+	@NonNull
+	protected Deque<CompositeKey> keysByAddingOrder;
+	@NonNull
+	protected AtomicReference<Date> lastEvicted;
+	protected Runtime runtime;
+	@Getter	@Setter
+	protected volatile long entryLifeTime;
+	@Getter	@Setter
+	protected volatile int minRating;
+	@Getter	@Setter
+	protected volatile int batchSize;
+	@Getter	@Setter
+	protected volatile boolean useGC;
 
-	@Override
+	public RatingCache() {
+	}
+
 	public void put(K key, V value) {
 		Date now = new Date();
 		CompositeKey compositeKey = new CompositeKey(key, now);
@@ -48,7 +48,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 		evictIfNeeded();
 	}
 
-	@Override
 	public V get(K key) {
 		evictIfNeeded();
 
@@ -86,17 +85,26 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 		}
 	}
 
-	@AllArgsConstructor
 	protected class CompositeValue {
 		private V value;
 		private Date inserted;
 		private final AtomicInteger rating;
+
+		public CompositeValue(V value, Date inserted, AtomicInteger rating) {
+			this.value = value;
+			this.inserted = inserted;
+			this.rating = rating;
+		}
 	}
 
-	@AllArgsConstructor
 	protected class CompositeKey {
 		final K key;
 		final Date inserted;
+
+		protected CompositeKey(K key, Date inserted) {
+			this.key = key;
+			this.inserted = inserted;
+		}
 	}
 }
 

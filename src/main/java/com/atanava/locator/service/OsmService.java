@@ -1,9 +1,9 @@
 package com.atanava.locator.service;
 
+import com.atanava.locator.cache.RatingCache;
 import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
-import com.atanava.locator.repository.CoordinatesRepository;
-import com.atanava.locator.utils.JsonUtil;
+import com.atanava.locator.repository.PointRepository;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Service
 public class OsmService {
-	private final CoordinatesRepository repository;
+	private final PointRepository repository;
 	private final OsmProvider osmProvider;
+	private final RatingCache<Point, ArrayNode> cache;
 
-	public ArrayNode createOrUpdate(String address,  Integer addressDetails, String format) {
+	public ArrayNode createOrUpdate(String address, Integer addressDetails, String format) {
 		ArrayNode source = osmProvider.getByAddress(address, format, detailsNeeded(addressDetails));
 		saveAndCache(source, format);
 		return JsonUtil.getConverted(source, format);
@@ -34,6 +35,7 @@ public class OsmService {
 	private void saveAndCache(ArrayNode source, String format) {
 		Set<Point> points = JsonUtil.getPoints(source, format);
 		log.info("Trying to save points: {}", points);
+
 
 		points.forEach(repository::save);
 	}
