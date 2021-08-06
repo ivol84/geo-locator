@@ -1,4 +1,4 @@
-package com.atanava.locator.service;
+package com.atanava.locator.service.utils;
 
 import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
@@ -15,7 +15,7 @@ import static com.atanava.locator.service.OsmConstants.*;
 public class JsonUtil {
 
     public static Set<Point> getPoints(ArrayNode source, String format) {
-        source = normalize(source, format);
+        source = normalize(source);
         Set<Point> points = new HashSet<>();
         source.forEach(jsonNode -> {
             PointId pointId = getPointId(jsonNode, format);
@@ -31,8 +31,8 @@ public class JsonUtil {
         return points;
     }
 
-    public static ArrayNode getConverted(ArrayNode source, String format) {
-        source = normalize(source, format);
+    public static ArrayNode getConverted(ArrayNode source, String format, boolean isDetailed) {
+        source = normalize(source);
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode converted = mapper.createArrayNode();
 
@@ -42,7 +42,7 @@ public class JsonUtil {
             node.put(LATITUDE, pointId.getLatitude());
             node.put(LONGITUDE, pointId.getLongitude());
             node.set(DISPLAY_NAME, GEOCODE_JSON.equals(format) ? jsonNode.findValue(LABEL) : jsonNode.findValue(DISPLAY_NAME));
-            if (jsonNode.findValue(ADDRESS) != null) {
+            if (isDetailed && jsonNode.findValue(ADDRESS) != null) {
                 node.set(ADDRESS, jsonNode.findValue(ADDRESS));//TODO implement for geocodejson too
             }
             converted.add(node);
@@ -50,10 +50,19 @@ public class JsonUtil {
         return converted;
     }
 
-    private static ArrayNode normalize(ArrayNode source, String format) {
-        return (GEO_JSON.equals(format) || GEOCODE_JSON.equals(format))
-                ? (ArrayNode) source.findValue(FEATURES)
-                : source;
+    public static ArrayNode merge(ArrayNode source, ArrayNode dest) {
+        for (JsonNode oldNode : dest) {
+            for (JsonNode newNode : source) {
+                if (!oldNode.equals(newNode)) {
+                    dest.add(newNode);
+                }
+            }
+        }
+        return dest;
+    }
+
+    private static ArrayNode normalize(ArrayNode source) {
+        return source.findValue(FEATURES) != null ? (ArrayNode) source.findValue(FEATURES) : source;
     }
 
     private static PointId getPointId(JsonNode node, String format) {

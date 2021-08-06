@@ -20,7 +20,6 @@ public class Point {
 	private PointId pointId;
 
 	@NotNull
-	@NotEmpty
 	@Column(name = "osm_id")
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> osmIds;

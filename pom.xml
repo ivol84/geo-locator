@@ -11,8 +11,8 @@
     <groupId>com.atanava</groupId>
     <artifactId>locator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>locator</name>
-    <description>Address Locator</description>
+    <name>GeoLocator</name>
+    <description>OSM Address Locator via Nominatim API</description>
     <properties>
         <java.version>15</java.version>
     </properties>

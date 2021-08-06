@@ -1,9 +1,12 @@
 package com.atanava.locator.service;
 
-import com.atanava.locator.service.cache.RatingCache;
 import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
 import com.atanava.locator.repository.PointRepository;
+import com.atanava.locator.service.cache.RatingCache;
+import com.atanava.locator.service.utils.JsonUtil;
+import com.atanava.locator.service.utils.UrlBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,35 +21,47 @@ import java.util.Set;
 public class OsmService {
 	private final PointRepository repository;
 	private final OsmProvider osmProvider;
-	private final RatingCache<Point, ArrayNode> cache;
+	private final RatingCache<String, Set<Point>> urlCache;
+	private final RatingCache<Point, ArrayNode> addressCache;
+	private final ObjectMapper mapper;
 
-	public ArrayNode createOrUpdate(String address, Integer addressDetails, String format) {
-		ArrayNode source = osmProvider.getByAddress(address, format, detailsNeeded(addressDetails));
-		saveAndCache(source, format);
-		return JsonUtil.getConverted(source, format);
+	public ArrayNode createOrUpdate(String format, Integer addressDetails, String... address) {
+		ArrayNode result = mapper.createArrayNode();
+		String url = UrlBuilder.getUrl(format, isDetailed(addressDetails), address);
+		Set<Point> points = urlCache.get(url);
+		if (points != null && !points.isEmpty()) {
+			for (Point point : points) {
+				ArrayNode forCache = get(format, addressDetails, point);
+				addressCache.put(point, forCache);
+				result.add(forCache);
+			}
+		} else {
+			result = osmProvider.get(url);
+			points = JsonUtil.getPoints(result, format);
+			urlCache.put(url, points);
+			result = JsonUtil.getConverted(result, format, isDetailed(addressDetails));
+			save(points);
+		}
+		return result;
 	}
 
-	public ArrayNode createOrUpdate(List<String> address, Integer addressDetails, String format) {
-		ArrayNode source = osmProvider.getByAddress(address, format, detailsNeeded(addressDetails));
-		saveAndCache(source, format);
-		return JsonUtil.getConverted(source, format);
-	}
-
-	private void saveAndCache(ArrayNode source, String format) {
-		Set<Point> points = JsonUtil.getPoints(source, format);
+	private void save(Set<Point> points) {
 		log.info("Trying to save points: {}", points);
-
-
 		points.forEach(repository::save);
 	}
 
-	public ArrayNode get(double latitude, double longitude, Integer addressDetails, String format) {
-		Point point = repository.findById(new PointId(latitude, longitude)).orElseThrow();
-		ArrayNode source = osmProvider.getByOsmIds(point.getOsmIds(), format, detailsNeeded(addressDetails));
-		return JsonUtil.getConverted(source, format);
+	public ArrayNode get(String format, Integer addressDetails, Point point) {
+		ArrayNode result = addressCache.get(point);
+		if (result == null) {
+			point = repository.findById(point.getPointId()).orElseThrow();
+			String url = UrlBuilder.getUrl(format, isDetailed(addressDetails), point.getOsmIds());
+			ArrayNode source = osmProvider.get(url);
+			result = JsonUtil.getConverted(source, format, isDetailed(addressDetails));
+		}
+		return result;
 	}
 
-	private boolean detailsNeeded(Integer addressDetails) {
+	private boolean isDetailed(Integer addressDetails) {
 		return addressDetails != null && addressDetails > 0;
 	}
 }

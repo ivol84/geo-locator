@@ -1,6 +1,7 @@
 package com.atanava.locator.service.cache;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.Deque;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @RequiredArgsConstructor
 public abstract class RatingCache<K, V> {
 	@NonNull
@@ -17,6 +19,7 @@ public abstract class RatingCache<K, V> {
 	protected Deque<CompositeKey> keysByAddingOrder;
 	@NonNull
 	protected AtomicReference<Date> lastEvicted;
+	@Setter
 	protected Runtime runtime;
 	@Getter	@Setter
 	protected volatile long entryLifeTime;
@@ -33,17 +36,17 @@ public abstract class RatingCache<K, V> {
 	public void put(K key, V value) {
 		Date now = new Date();
 		CompositeKey compositeKey = new CompositeKey(key, now);
-
 		CompositeValue compositeValue = innerMap.get(key);
+
 		if (compositeValue != null) {
 			compositeValue.value = value;
 			compositeValue.inserted = now;
 		} else {
 			compositeValue = new CompositeValue(value, now, new AtomicInteger());
 		}
-
 		innerMap.put(key, compositeValue);
 		keysByAddingOrder.addLast(compositeKey);
+		log.debug("Put to cache key: {} value: {}", key, value);
 
 		evictIfNeeded();
 	}
@@ -51,17 +54,21 @@ public abstract class RatingCache<K, V> {
 	public V get(K key) {
 		evictIfNeeded();
 
+		V value = null;
 		CompositeValue compositeValue = innerMap.get(key);
-		if (compositeValue != null && (new Date().getTime() - compositeValue.inserted.getTime()) < entryLifeTime) {
+		if (compositeValue != null) {
 			compositeValue.rating.incrementAndGet();
-			return compositeValue.value;
+			value = compositeValue.value;
 		}
-		return null;
+		log.debug("Get from cache key: {} value: {}", key, value);
+
+		return value;
 	}
 
-	protected void evictIfNeeded() {}
+	protected abstract void evictIfNeeded();
 
 	protected void evictCache() {
+		log.debug("Evict cache");
 		Date now = new Date();
 		if ((now.getTime() - lastEvicted.get().getTime()) >= entryLifeTime) {
 			Iterator<CompositeKey> iterator = keysByAddingOrder.iterator();
@@ -69,12 +76,15 @@ public abstract class RatingCache<K, V> {
 				CompositeKey next = iterator.next();
 				if ((now.getTime() - next.inserted.getTime()) >= entryLifeTime) {
 					iterator.remove();
+					log.debug("REMOVE CompositeKey: {} from keysByAddingOrder", next.key);
 
 					K key = next.key;
 					CompositeValue compositeValue = innerMap.get(key);
-					if ((now.getTime() - compositeValue.inserted.getTime()) >= entryLifeTime
+					if (compositeValue != null
+							&& (now.getTime() - compositeValue.inserted.getTime()) >= entryLifeTime
 							&& compositeValue.rating.decrementAndGet() < minRating) {
-						innerMap.remove(key);
+						CompositeValue removed = innerMap.remove(key);
+						log.debug("REMOVE key: {} value: {} from inner map", key, removed.value);
 					}
 				} else break;
 			}

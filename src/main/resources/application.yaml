@@ -35,8 +35,9 @@ spring:
 
 custom.cache:
   lifetime: 60_000
+  sleep: 5000
   rating: 10
-  batchsize: 1000
+  batchsize: 100
   usegc: true
 
 

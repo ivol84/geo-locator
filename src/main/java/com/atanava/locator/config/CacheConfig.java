@@ -32,6 +32,7 @@ public class CacheConfig<K, V> {
                 new ConcurrentLinkedDeque<>(),
                 new AtomicReference<>(new Date()));
         setFields(cache);
+        cache.setSleep(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.cache.sleep"))));
         log.debug("Created MultiThreadRatingCache");
 
         return cache;
@@ -53,5 +54,6 @@ public class CacheConfig<K, V> {
         cache.setMinRating(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.cache.rating"))));
         cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.cache.batchsize"))));
         cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.cache.usegc"))));
+        if (cache.isUseGC()) cache.setRuntime(Runtime.getRuntime());
     }
 }
