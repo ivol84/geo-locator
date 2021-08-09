@@ -1,68 +1,80 @@
 package com.atanava.locator.service.utils;
 
-import com.atanava.locator.model.Point;
+import com.atanava.locator.service.PointTo;
 import com.atanava.locator.model.PointId;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.atanava.locator.service.OsmConstants.*;
 
 public class JsonUtil {
 
-    public static Set<Point> getPoints(ArrayNode source, String format) {
-        source = normalize(source);
-        Set<Point> points = new HashSet<>();
-        source.forEach(jsonNode -> {
-            PointId pointId = getPointId(jsonNode, format);
-            Point point = new Point(pointId, new HashSet<>());
-            point.getOsmIds()
-                    .add(jsonNode.findValue(OSM_TYPE)
-                            .asText()
-                            .substring(0, 1)
-                            .toUpperCase() +
-                            jsonNode.findValue(OSM_ID).asText());
-            points.add(point);
-        });
-        return points;
-    }
+    private final static ObjectMapper mapper = new ObjectMapper();
 
-    public static ArrayNode getConverted(ArrayNode source, String format, boolean isDetailed) {
+    public static Map<PointTo, JsonNode> convertToMap(ArrayNode source, String format) {
         source = normalize(source);
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode converted = mapper.createArrayNode();
+        Map<PointTo, JsonNode> converted = new HashMap<>();
 
         source.forEach(jsonNode -> {
-            ObjectNode node = mapper.createObjectNode();
-            PointId pointId = getPointId(jsonNode, format);
-            node.put(LATITUDE, pointId.getLatitude());
-            node.put(LONGITUDE, pointId.getLongitude());
-            node.set(DISPLAY_NAME, GEOCODE_JSON.equals(format) ? jsonNode.findValue(LABEL) : jsonNode.findValue(DISPLAY_NAME));
-            if (isDetailed && jsonNode.findValue(ADDRESS) != null) {
-                node.set(ADDRESS, jsonNode.findValue(ADDRESS));//TODO implement for geocodejson too
-            }
-            converted.add(node);
+            PointTo pointTo = getPoint(jsonNode, format);
+            JsonNode addressNode = getAddress(jsonNode, format);
+            converted.put(pointTo, addressNode);
         });
         return converted;
     }
 
-    public static ArrayNode merge(ArrayNode source, ArrayNode dest) {
-        for (JsonNode oldNode : dest) {
-            for (JsonNode newNode : source) {
-                if (!oldNode.equals(newNode)) {
-                    dest.add(newNode);
-                }
-            }
-        }
-        return dest;
+    public static ArrayNode combine(Collection<JsonNode> parts) {
+        ArrayNode result = mapper.createArrayNode();
+        parts.forEach(result::add);
+        return result;
+    }
+
+    public static ArrayNode getSimple(ArrayNode source) {
+        ArrayNode simple = source.deepCopy();
+        simple.forEach(jsonNode -> ((ObjectNode) jsonNode).remove(ADDRESS));
+        return simple;
     }
 
     private static ArrayNode normalize(ArrayNode source) {
         return source.findValue(FEATURES) != null ? (ArrayNode) source.findValue(FEATURES) : source;
+    }
+
+    private static JsonNode getAddress(JsonNode source, String format) {
+        ObjectNode result = mapper.createObjectNode();
+        PointId pointId = getPointId(source, format);
+        result.put(LATITUDE, pointId.getLatitude());
+        result.put(LONGITUDE, pointId.getLongitude());
+        if (GEOCODE_JSON.equals(format)) {
+            result.set(LABEL, source.findValue(LABEL));
+            ObjectNode address = (ObjectNode) source.findValue(GEO_CODING);
+            address.remove(PLACE_ID);
+            address.remove(OSM_TYPE);
+            address.remove(OSM_ID);
+            address.remove(TYPE);
+            address.remove(LABEL);
+            address.remove(ADMIN);
+            result.set(ADDRESS, address);
+        } else {
+            result.set(DISPLAY_NAME, source.findValue(DISPLAY_NAME));
+            result.set(ADDRESS, source.findValue(ADDRESS));
+        }
+        return result;
+    }
+
+    private static PointTo getPoint(JsonNode source, String format) {
+        PointId pointId = getPointId(source, format);
+        PointTo pointTo = new PointTo(pointId, new HashSet<>(), format);
+        pointTo.getOsmIds()
+                .add(source.findValue(OSM_TYPE)
+                        .asText()
+                        .substring(0, 1)
+                        .toUpperCase() +
+                        source.findValue(OSM_ID).asText());
+        return pointTo;
     }
 
     private static PointId getPointId(JsonNode node, String format) {

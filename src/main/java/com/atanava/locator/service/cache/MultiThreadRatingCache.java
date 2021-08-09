@@ -33,7 +33,7 @@ public class MultiThreadRatingCache<K, V> extends RatingCache<K, V> {
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
-				if (keysByAddingOrder.size() >= batchSize) {
+				if (innerMap.size() >= batchSize) {
 					try {
 						log.debug("Evict Cache from daemon----------------------------------");
 						evictCache();

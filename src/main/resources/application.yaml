@@ -37,7 +37,7 @@ custom.cache:
   lifetime: 60_000
   sleep: 5000
   rating: 10
-  batchsize: 100
+  batchsize: 20
   usegc: true
 
 

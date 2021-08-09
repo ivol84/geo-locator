@@ -84,7 +84,10 @@ public abstract class RatingCache<K, V> {
 							&& (now.getTime() - compositeValue.inserted.getTime()) >= entryLifeTime
 							&& compositeValue.rating.decrementAndGet() < minRating) {
 						CompositeValue removed = innerMap.remove(key);
-						log.debug("REMOVE key: {} value: {} from inner map", key, removed.value);
+						log.debug("REMOVE key: {} value: {} from inner map", key, removed);
+					} else if (compositeValue == null) {
+						CompositeValue removed = innerMap.remove(key);
+						log.debug("REMOVE key: {} value: {} from inner map", key, removed);
 					}
 				} else break;
 			}
@@ -95,26 +98,22 @@ public abstract class RatingCache<K, V> {
 		}
 	}
 
+	@AllArgsConstructor
 	protected class CompositeValue {
 		private V value;
 		private Date inserted;
 		private final AtomicInteger rating;
 
-		public CompositeValue(V value, Date inserted, AtomicInteger rating) {
-			this.value = value;
-			this.inserted = inserted;
-			this.rating = rating;
+		@Override
+		public String toString() {
+			return value.toString();
 		}
 	}
 
+	@AllArgsConstructor
 	protected class CompositeKey {
 		final K key;
 		final Date inserted;
-
-		protected CompositeKey(K key, Date inserted) {
-			this.key = key;
-			this.inserted = inserted;
-		}
 	}
 }
 

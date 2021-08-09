@@ -15,15 +15,23 @@ public class OsmConstants {
     public static final String ADDRESS = "address";
     public static final String ADDR_DETAILS = "addressdetails=1";
     public static final String FEATURES = "features";
-    public static final String STREET = "street=";
-    public static final String CITY = "city=";
-    public static final String COUNTRY = "county=";
-    public static final String STATE = "state=";
-    public static final String POSTAL_CODE = "postalcode=";
+    public static final String NAME = "features";
+    public static final String STREET = "street";
+    public static final String CITY = "city";
+    public static final String COUNTRY = "county";
+    public static final String STATE = "state";
+    public static final String POST_CODE = "postcode";
+    public static final String POSTAL_CODE = "postalcode";
+    public static final String DISTRICT = "district";
+    public static final String LOCALITY = "locality";
     public static final String COORDINATES = "coordinates";
     public static final String LATITUDE = "lat";
     public static final String LONGITUDE = "lon";
     public static final String OSM_TYPE = "osm_type";
     public static final String OSM_ID = "osm_id";
+    public static final String PLACE_ID = "place_id";
+    public static final String GEO_CODING = "geocoding";
+    public static final String TYPE = "type";
+    public static final String ADMIN = "admin";
 
 }

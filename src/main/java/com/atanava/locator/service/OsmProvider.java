@@ -1,7 +1,5 @@
 package com.atanava.locator.service;
 
-import com.atanava.locator.model.Point;
-import com.atanava.locator.service.cache.RatingCache;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,11 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Set;
-
-import static com.atanava.locator.service.OsmConstants.*;
 
 @Slf4j
 @RequiredArgsConstructor
