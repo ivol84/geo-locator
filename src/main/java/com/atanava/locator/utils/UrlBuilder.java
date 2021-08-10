@@ -1,4 +1,4 @@
-package com.atanava.locator.service.utils;
+package com.atanava.locator.utils;
 
 import java.util.Arrays;
 import java.util.Set;

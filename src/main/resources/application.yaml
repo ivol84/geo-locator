@@ -23,11 +23,11 @@ spring:
     password: 12345
   h2.console.enabled: true
 
-  security:
-    user:
-      name: user
-      password: password
-      roles: USER
+#  security:
+#    user:
+#      name: user
+#      password: password
+#      roles: USER
 
   profiles:
     active: multi-thread
@@ -46,7 +46,7 @@ logging:
   level:
     root: WARN
     com.atanava.locator: DEBUG
-    org.springframework.security.web.FilterChainProxy: DEBUG
+#    org.springframework.security.web.FilterChainProxy: DEBUG
 
 # Jackson Serialization Issue Resolver
 #  jackson:

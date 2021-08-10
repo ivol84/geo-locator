@@ -4,8 +4,8 @@ import com.atanava.locator.model.Point;
 import com.atanava.locator.model.PointId;
 import com.atanava.locator.repository.PointRepository;
 import com.atanava.locator.cache.RatingCache;
-import com.atanava.locator.service.utils.JsonUtil;
-import com.atanava.locator.service.utils.UrlBuilder;
+import com.atanava.locator.utils.JsonUtil;
+import com.atanava.locator.utils.UrlBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,7 @@ public class OsmService {
 		return isSimple(addressDetails) ? JsonUtil.getSimple(result) : result;
 	}
 
+	@RolesAllowed("ADMIN")
 	public ArrayNode getAll(String format, Integer addressDetails) {
 		Set<String> osmIds = getOsmIds(repository.findAll(), format);
 		ArrayNode result = getByOsmIds(format, osmIds, false);

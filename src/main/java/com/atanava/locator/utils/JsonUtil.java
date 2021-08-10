@@ -1,4 +1,4 @@
-package com.atanava.locator.service.utils;
+package com.atanava.locator.utils;
 
 import com.atanava.locator.service.PointTo;
 import com.atanava.locator.model.PointId;
