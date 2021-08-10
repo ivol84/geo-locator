@@ -10,5 +10,6 @@ public class PointTo {
 
 	PointId pointId;
 	Set<String> osmIds;
-	String type;
+	String format;
+	boolean isGeoCode;
 }

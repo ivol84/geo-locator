@@ -1,8 +1,9 @@
 package com.atanava.locator.service;
 
 import com.atanava.locator.model.Point;
+import com.atanava.locator.model.PointId;
 import com.atanava.locator.repository.PointRepository;
-import com.atanava.locator.service.cache.RatingCache;
+import com.atanava.locator.cache.RatingCache;
 import com.atanava.locator.service.utils.JsonUtil;
 import com.atanava.locator.service.utils.UrlBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,9 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.atanava.locator.service.OsmConstants.GEOCODE_JSON;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,23 +36,33 @@ public class OsmService {
 			for (PointTo pointTo : pointTos) {
 				JsonNode part = addressCache.get(pointTo);
 				if (part == null || part.isEmpty()) {
-					part = get(format, addressDetails, pointTo).get(0);
+					getByPointTo(format, addressDetails, pointTo).forEach(result::add);
+				} else {
+					result.add(part);
 				}
-				result.add(part);
 			}
 		} else {
 			result = osmProvider.get(url);
-			Map<PointTo, JsonNode> converted = JsonUtil.convertToMap(result, format);
+			Map<PointTo, JsonNode> converted = JsonUtil.convertToMap(result, format, addressCache.isMemorySaving());
 			converted.forEach(addressCache::put);
 			pointTos = converted.keySet();
 			urlCache.put(url, pointTos);
 			result = JsonUtil.combine(converted.values());
 			save(pointTos);
 		}
-		if (isSimple(addressDetails)) {
-			result = JsonUtil.getSimple(result);
+		return isSimple(addressDetails) ? JsonUtil.getSimple(result) : result;
+	}
+
+	private ArrayNode getByPointTo(String format, Integer addressDetails, PointTo pointTo) {
+		ArrayNode result = JsonUtil.combine(List.of(addressCache.get(pointTo)));
+
+		if (result == null || result.isEmpty()) {
+			Point point = repository.findById(pointTo.getPointId())
+					.orElseThrow();
+			pointTo = getPointTo(point, format);
+			result = getByOsmIds(format, pointTo.getOsmIds(), true);
 		}
-		return result;
+		return isSimple(addressDetails) ? JsonUtil.getSimple(result) : result;
 	}
 
 	private void save(Set<PointTo> pointTos) {
@@ -61,26 +73,45 @@ public class OsmService {
 		});
 	}
 
-	public ArrayNode get(String format, Integer addressDetails, PointTo pointTo) {
-		ArrayNode result = JsonUtil.combine(List.of(addressCache.get(pointTo)));
+	public ArrayNode getByPointIds(String format, Integer addressDetails, Set<PointId> pointIds) {
+		Set<String> osmIds = getOsmIds(repository.findByPointIdIn(pointIds), format);
+		ArrayNode result = getByOsmIds(format, osmIds, true);
 
-		if (result == null || result.isEmpty()) {
-			Point point =  repository.findById(pointTo.getPointId())
-					.orElseThrow();
-			pointTo = new PointTo(point.getPointId(), point.getOsmIds(), format);
-			String url = UrlBuilder.getUrl(format, pointTo.getOsmIds());
-			ArrayNode source = osmProvider.get(url);
-			Map<PointTo, JsonNode> converted = JsonUtil.convertToMap(source, format);
+		return isSimple(addressDetails) ? JsonUtil.getSimple(result) : result;
+	}
+
+	public ArrayNode getAll(String format, Integer addressDetails) {
+		Set<String> osmIds = getOsmIds(repository.findAll(), format);
+		ArrayNode result = getByOsmIds(format, osmIds, false);
+
+		return isSimple(addressDetails) ? JsonUtil.getSimple(result) : result;
+	}
+
+	private ArrayNode getByOsmIds(String format, Set<String> osmIds, boolean needToCache) {
+		if (osmIds.isEmpty())
+			throw new NoSuchElementException();
+		String url = UrlBuilder.getUrl(format, osmIds);
+		ArrayNode source = osmProvider.get(url);
+		Map<PointTo, JsonNode> converted = JsonUtil.convertToMap(source, format, addressCache.isMemorySaving());
+		if (needToCache) {
 			converted.forEach(addressCache::put);
-			result = JsonUtil.combine(converted.values());
 		}
-		if (isSimple(addressDetails)) {
-			result = JsonUtil.getSimple(result);
-		}
-		return result;
+		return JsonUtil.combine(converted.values());
 	}
 
 	private boolean isSimple(Integer addressDetails) {
 		return addressDetails == null || addressDetails <= 0;
+	}
+
+	private PointTo getPointTo(Point point, String format) {
+		format = addressCache.isMemorySaving() ? null : format;
+		return new PointTo(point.getPointId(), point.getOsmIds(), format, GEOCODE_JSON.equals(format));
+	}
+
+	private Set<String> getOsmIds(Collection<Point> points, String format) {
+		return points.stream()
+				.map(point -> getPointTo(point, format))
+				.flatMap(pointTo -> pointTo.getOsmIds().stream())
+				.collect(Collectors.toSet());
 	}
 }

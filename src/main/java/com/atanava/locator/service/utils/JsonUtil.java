@@ -15,12 +15,12 @@ public class JsonUtil {
 
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    public static Map<PointTo, JsonNode> convertToMap(ArrayNode source, String format) {
+    public static Map<PointTo, JsonNode> convertToMap(ArrayNode source, String format, boolean isMemorySaving) {
         source = normalize(source);
         Map<PointTo, JsonNode> converted = new HashMap<>();
 
         source.forEach(jsonNode -> {
-            PointTo pointTo = getPoint(jsonNode, format);
+            PointTo pointTo = getPointTo(jsonNode, format, isMemorySaving);
             JsonNode addressNode = getAddress(jsonNode, format);
             converted.put(pointTo, addressNode);
         });
@@ -29,7 +29,13 @@ public class JsonUtil {
 
     public static ArrayNode combine(Collection<JsonNode> parts) {
         ArrayNode result = mapper.createArrayNode();
-        parts.forEach(result::add);
+        parts.stream()
+                .filter(jsonNode -> !jsonNode.isArray())
+                .forEach(result::add);
+        parts.stream()
+                .filter(JsonNode::isArray)
+                .forEach(jsonNode -> jsonNode.forEach(result::add));
+
         return result;
     }
 
@@ -46,8 +52,8 @@ public class JsonUtil {
     private static JsonNode getAddress(JsonNode source, String format) {
         ObjectNode result = mapper.createObjectNode();
         PointId pointId = getPointId(source, format);
-        result.put(LATITUDE, pointId.getLatitude());
-        result.put(LONGITUDE, pointId.getLongitude());
+        result.put(LATITUDE, pointId.getLat());
+        result.put(LONGITUDE, pointId.getLon());
         if (GEOCODE_JSON.equals(format)) {
             result.set(LABEL, source.findValue(LABEL));
             ObjectNode address = (ObjectNode) source.findValue(GEO_CODING);
@@ -65,9 +71,10 @@ public class JsonUtil {
         return result;
     }
 
-    private static PointTo getPoint(JsonNode source, String format) {
+    private static PointTo getPointTo(JsonNode source, String format, boolean isMemorySaving) {
         PointId pointId = getPointId(source, format);
-        PointTo pointTo = new PointTo(pointId, new HashSet<>(), format);
+        format = isMemorySaving ? null : format;
+        PointTo pointTo = new PointTo(pointId, new HashSet<>(), format, GEOCODE_JSON.equals(format));
         pointTo.getOsmIds()
                 .add(source.findValue(OSM_TYPE)
                         .asText()
@@ -85,7 +92,7 @@ public class JsonUtil {
             }
             case GEO_JSON, GEOCODE_JSON -> {
                 ArrayNode coordinates = (ArrayNode) node.findValue(COORDINATES);
-                pointId = new PointId(coordinates.get(0).asDouble(), coordinates.get(1).asDouble());
+                pointId = new PointId(coordinates.get(1).asDouble(), coordinates.get(0).asDouble());
             }
             default -> throw new IllegalStateException("Unexpected value: " + format);
         }

@@ -1,4 +1,4 @@
-package com.atanava.locator.service.cache;
+package com.atanava.locator.cache;
 
 import java.util.Date;
 import java.util.Deque;

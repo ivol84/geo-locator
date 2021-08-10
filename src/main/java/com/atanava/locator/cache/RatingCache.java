@@ -1,4 +1,4 @@
-package com.atanava.locator.service.cache;
+package com.atanava.locator.cache;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,8 @@ public abstract class RatingCache<K, V> {
 	protected volatile int batchSize;
 	@Getter	@Setter
 	protected volatile boolean useGC;
+	@Getter @Setter
+	private boolean isMemorySaving;
 
 	public RatingCache() {
 	}
@@ -112,8 +114,8 @@ public abstract class RatingCache<K, V> {
 
 	@AllArgsConstructor
 	protected class CompositeKey {
-		final K key;
-		final Date inserted;
+		private final K key;
+		private final Date inserted;
 	}
 }
 

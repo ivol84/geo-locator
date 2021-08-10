@@ -1,6 +1,5 @@
 package com.atanava.locator.web;
 
-import com.atanava.locator.service.PointTo;
 import com.atanava.locator.model.PointId;
 import com.atanava.locator.service.OsmService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -11,7 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.atanava.locator.service.OsmConstants.*;
 
@@ -46,34 +48,35 @@ public class OsmController {
 			created = osmService.createOrUpdate(format, addressdetails, q);
 		} else {
 			log.info("Create coordinates for address: {}, {}, {}, {}, {}, {}", street, city, country1, state, country2, postalcode);
-			String[] address = {STREET + "=" + street,
-					CITY + "=" + city,
-					COUNTRY + "=" + country1,
-					STATE + "=" + state,
-					COUNTRY + "=" + country2,
-					POSTAL_CODE + "=" + postalcode};
+			List<String> address = new ArrayList<>();
+			if (street != null) address.add(STREET + "=" + street);
+			if (city != null) address.add(CITY + "=" + city);
+			if (country1 != null) address.add(COUNTRY + "=" + country1);
+			if (state != null) address.add(STATE + "=" + state);
+			if (country2 != null) address.add(COUNTRY + "=" + country2);
+			if (postalcode != null) address.add(POSTAL_CODE + "=" + postalcode);
 
-			String tmp = null;
-			for (String addrDetail : address) {
-				if (addrDetail != null && !addrDetail.isEmpty())
-					tmp = addrDetail.strip().trim();
-			}
-			if (tmp == null || tmp.isEmpty()) {
+			if (address.isEmpty()) {
 				throw new IllegalArgumentException("Address must not be empty or null");
 			}
-			created = osmService.createOrUpdate(format, addressdetails, address);
+			created = osmService.createOrUpdate(format, addressdetails, address.toArray(String[]::new));
 		}
 		return new ResponseEntity<>(created, HttpStatus.OK);
 	}
 
 	@GetMapping("/lookup")
-	public ResponseEntity<ArrayNode> getAddresses(double latitude, double longitude,
-												  @RequestParam(required = false) Integer addressdetails,
-												  @RequestParam(required = false) String format) {
-		log.info("Get addresses for coordinates: {}, {}", latitude, longitude);
+	public ResponseEntity<ArrayNode> getByPoints(@RequestBody (required = false) PointId[] pointIds,
+												 @RequestParam(required = false) Integer addressdetails,
+												 @RequestParam(required = false) String format) {
+		log.info("Get addresses for points: {}", Arrays.toString(pointIds));
 		format = getFormatOrDefault(format);
 
-		ArrayNode fetched = osmService.get(format, addressdetails, new PointTo(new PointId(latitude, longitude), Set.of(), format));
+		ArrayNode fetched;
+		if (pointIds == null) {
+			fetched = osmService.getAll(format, addressdetails);
+		} else {
+			fetched = osmService.getByPointIds(format, addressdetails, Arrays.stream(pointIds).collect(Collectors.toSet()));
+		}
 
 		return new ResponseEntity<>(fetched, HttpStatus.OK);
 	}
@@ -81,4 +84,5 @@ public class OsmController {
 	private String getFormatOrDefault(String format) {
 		return (JSON_V2.equals(format) || GEO_JSON.equals(format) || GEOCODE_JSON.equals(format)) ? format : JSON;
 	}
+
 }

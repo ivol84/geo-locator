@@ -15,11 +15,11 @@ import java.io.Serializable;
 @Embeddable
 public class PointId implements Serializable {
 
-	@Column(name = "latitude")
-	private double latitude;
+	@Column(name = "lat")
+	private double lat;
 
-	@Column(name = "longitude")
-	private double longitude;
+	@Column(name = "lon")
+	private double lon;
 
 	@Override
 	public boolean equals(Object o) {
@@ -28,17 +28,17 @@ public class PointId implements Serializable {
 
 		PointId that = (PointId) o;
 
-		if (Double.compare(that.latitude, latitude) != 0) return false;
-		return Double.compare(that.longitude, longitude) == 0;
+		if (Double.compare(that.lat, lat) != 0) return false;
+		return Double.compare(that.lon, lon) == 0;
 	}
 
 	@Override
 	public int hashCode() {
 		int result;
 		long temp;
-		temp = Double.doubleToLongBits(latitude);
+		temp = Double.doubleToLongBits(lat);
 		result = (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(longitude);
+		temp = Double.doubleToLongBits(lon);
 		result = 31 * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -46,8 +46,8 @@ public class PointId implements Serializable {
 	@Override
 	public String toString() {
 		return "Point{" +
-				"latitude=" + latitude +
-				", longitude=" + longitude +
+				"latitude=" + lat +
+				", longitude=" + lon +
 				'}';
 	}
 }

@@ -1,8 +1,8 @@
 package com.atanava.locator.config;
 
-import com.atanava.locator.service.cache.MultiThreadRatingCache;
-import com.atanava.locator.service.cache.RatingCache;
-import com.atanava.locator.service.cache.SingleThreadRatingCache;
+import com.atanava.locator.cache.MultiThreadRatingCache;
+import com.atanava.locator.cache.RatingCache;
+import com.atanava.locator.cache.SingleThreadRatingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +32,7 @@ public class CacheConfig<K, V> {
                 new ConcurrentLinkedDeque<>(),
                 new AtomicReference<>(new Date()));
         setFields(cache);
-        cache.setSleep(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.cache.sleep"))));
+        cache.setSleepTime(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.sleep"))));
         log.debug("Created MultiThreadRatingCache");
 
         return cache;
@@ -50,10 +50,11 @@ public class CacheConfig<K, V> {
     }
 
     private void setFields(RatingCache<K, V> cache) {
-        cache.setEntryLifeTime(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.cache.lifetime"))));
-        cache.setMinRating(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.cache.rating"))));
-        cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.cache.batchsize"))));
-        cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.cache.usegc"))));
+        cache.setEntryLifeTime(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.lifetime"))));
+        cache.setMinRating(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.rating"))));
+        cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.batchsize"))));
+        cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.usegc"))));
+        cache.setMemorySaving(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.savememory"))));
         if (cache.isUseGC()) cache.setRuntime(Runtime.getRuntime());
     }
 }

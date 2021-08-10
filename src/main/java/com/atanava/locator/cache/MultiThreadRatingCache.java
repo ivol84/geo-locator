@@ -1,4 +1,4 @@
-package com.atanava.locator.service.cache;
+package com.atanava.locator.cache;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MultiThreadRatingCache<K, V> extends RatingCache<K, V> {
 
 	@Setter
-	private long sleep;
+	private long sleepTime;
 
 	public MultiThreadRatingCache(Map<K, CompositeValue> innerMap,
 								  Deque<CompositeKey> keyByAddingOrder,
@@ -32,14 +32,14 @@ public class MultiThreadRatingCache<K, V> extends RatingCache<K, V> {
 	private class Cleaner implements Runnable {
 		@Override
 		public void run() {
-			while (!Thread.currentThread().isInterrupted()) {
+			while (true) {
 				if (innerMap.size() >= batchSize) {
 					try {
 						log.debug("Evict Cache from daemon----------------------------------");
 						evictCache();
-						Thread.sleep(sleep);// это решение мне не нравится
+						Thread.sleep(sleepTime);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						log.warn("Thread was interrupted = {}", Thread.interrupted());
 					}
 				}
 			}

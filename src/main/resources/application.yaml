@@ -33,12 +33,13 @@ spring:
     active: multi-thread
 #    active: single-thread
 
-custom.cache:
+custom:
   lifetime: 60_000
   sleep: 5000
   rating: 10
   batchsize: 20
   usegc: true
+  savememory: true
 
 
 logging:
