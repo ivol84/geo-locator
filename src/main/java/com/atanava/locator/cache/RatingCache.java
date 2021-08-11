@@ -90,6 +90,9 @@ public abstract class RatingCache<K, V> {
 					} else if (compositeValue == null) {
 						CompositeValue removed = innerMap.remove(key);
 						log.debug("REMOVE key: {} value: {} from inner map", key, removed);
+					} else {
+						keysByAddingOrder.addLast(new CompositeKey(key, now));
+						log.debug("MOVED to end of deque key: {} ", key);
 					}
 				} else break;
 			}

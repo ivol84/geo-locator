@@ -73,8 +73,11 @@ public class JsonUtil {
 
     private static PointTo getPointTo(JsonNode source, String format, boolean isMemorySaving) {
         PointId pointId = getPointId(source, format);
-        format = isMemorySaving ? null : format;
-        PointTo pointTo = new PointTo(pointId, new HashSet<>(), format, GEOCODE_JSON.equals(format));
+
+        PointTo pointTo = isMemorySaving ?
+                new PointTo(pointId, new HashSet<>(), null, GEOCODE_JSON.equals(format))
+                : new PointTo(pointId, new HashSet<>(), format, GEOCODE_JSON.equals(format));
+
         pointTo.getOsmIds()
                 .add(source.findValue(OSM_TYPE)
                         .asText()

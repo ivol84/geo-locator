@@ -32,7 +32,7 @@ public class CacheConfig<K, V> {
                 new ConcurrentLinkedDeque<>(),
                 new AtomicReference<>(new Date()));
         setFields(cache);
-        cache.setSleepTime(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.sleep"))));
+        cache.setSleepTime(Long.parseLong(Objects.requireNonNull(env.getProperty("rating-cache.sleep"))));
         log.debug("Created MultiThreadRatingCache");
 
         return cache;
@@ -50,11 +50,11 @@ public class CacheConfig<K, V> {
     }
 
     private void setFields(RatingCache<K, V> cache) {
-        cache.setEntryLifeTime(Long.parseLong(Objects.requireNonNull(env.getProperty("custom.lifetime"))));
-        cache.setMinRating(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.rating"))));
-        cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("custom.batchsize"))));
-        cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.usegc"))));
-        cache.setMemorySaving(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("custom.savememory"))));
+        cache.setEntryLifeTime(Long.parseLong(Objects.requireNonNull(env.getProperty("rating-cache.lifetime"))));
+        cache.setMinRating(Integer.parseInt(Objects.requireNonNull(env.getProperty("rating-cache.rating"))));
+        cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("rating-cache.batchsize"))));
+        cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("rating-cache.usegc"))));
+        cache.setMemorySaving(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("rating-cache.savememory"))));
         if (cache.isUseGC()) cache.setRuntime(Runtime.getRuntime());
     }
 }

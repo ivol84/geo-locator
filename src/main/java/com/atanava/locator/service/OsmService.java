@@ -106,8 +106,9 @@ public class OsmService {
 	}
 
 	private PointTo getPointTo(Point point, String format) {
-		format = addressCache.isMemorySaving() ? null : format;
-		return new PointTo(point.getPointId(), point.getOsmIds(), format, GEOCODE_JSON.equals(format));
+		return  addressCache.isMemorySaving() ?
+				new PointTo(point.getPointId(), point.getOsmIds(), null, GEOCODE_JSON.equals(format))
+				: new PointTo(point.getPointId(), point.getOsmIds(), format, GEOCODE_JSON.equals(format));
 	}
 
 	private Set<String> getOsmIds(Collection<Point> points, String format) {
