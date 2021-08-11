@@ -23,12 +23,6 @@ spring:
     password: 12345
   h2.console.enabled: true
 
-#  security:
-#    user:
-#      name: user
-#      password: password
-#      roles: USER
-
   profiles:
     active: multi-thread
 #    active: single-thread
@@ -47,10 +41,3 @@ logging:
     root: WARN
     com.atanava.locator: DEBUG
 #    org.springframework.security.web.FilterChainProxy: DEBUG
-
-# Jackson Serialization Issue Resolver
-#  jackson:
-#    visibility.field: any
-#    visibility.getter: none
-#    visibility.setter: none
-#    visibility.is-getter: none

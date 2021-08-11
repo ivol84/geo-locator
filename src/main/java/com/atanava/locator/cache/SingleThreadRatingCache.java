@@ -15,7 +15,7 @@ public class SingleThreadRatingCache<K, V> extends RatingCache<K, V> {
 
 	@Override
 	protected void evictIfNeeded() {
-		if (keysByAddingOrder.size() >= batchSize) {
+		if (innerMap.size() >= batchSize) {
 			evictCache();
 		}
 	}

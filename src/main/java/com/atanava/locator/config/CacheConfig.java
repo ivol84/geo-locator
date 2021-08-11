@@ -38,6 +38,7 @@ public class CacheConfig<K, V> {
         return cache;
     }
 
+    @Bean
     @Profile("single-thread")
     public SingleThreadRatingCache<K, V> singleThreadRatingCache() {
         SingleThreadRatingCache<K, V> cache = new SingleThreadRatingCache<>(new HashMap<>(),

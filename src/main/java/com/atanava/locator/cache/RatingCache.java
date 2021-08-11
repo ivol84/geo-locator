@@ -70,7 +70,7 @@ public abstract class RatingCache<K, V> {
 	protected abstract void evictIfNeeded();
 
 	protected void evictCache() {
-		log.debug("Evict cache");
+		log.debug("Trying to evict cache");
 		Date now = new Date();
 		if ((now.getTime() - lastEvicted.get().getTime()) >= entryLifeTime) {
 			Iterator<CompositeKey> iterator = keysByAddingOrder.iterator();

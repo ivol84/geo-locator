@@ -35,7 +35,7 @@ public class MultiThreadRatingCache<K, V> extends RatingCache<K, V> {
 			while (true) {
 				if (innerMap.size() >= batchSize) {
 					try {
-						log.debug("Evict Cache from daemon----------------------------------");
+						log.debug("Woke up cache cleaner daemon ----------------------------------");
 						evictCache();
 						Thread.sleep(sleepTime);
 					} catch (InterruptedException e) {
