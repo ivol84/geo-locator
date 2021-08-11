@@ -1,0 +1,567 @@
+{
+	"info": {
+		"_postman_id": "3bbd65f2-992f-4c8d-bebd-3b987fdfe229",
+		"name": "GeoLocator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search Unauthorized",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/search?addressdetails=1&q=bakery+in+berlin&format=json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "addressdetails",
+							"value": "1"
+						},
+						{
+							"key": "q",
+							"value": "bakery+in+berlin"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search bakery in Berlin json",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/search?addressdetails=1&q=bakery+in+berlin&format=json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "addressdetails",
+							"value": "1"
+						},
+						{
+							"key": "q",
+							"value": "bakery+in+berlin"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search bakery in Berlin geocodejson",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/search?addressdetails=1&q=bakery+in+berlin&format=geocodejson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "addressdetails",
+							"value": "1"
+						},
+						{
+							"key": "q",
+							"value": "bakery+in+berlin"
+						},
+						{
+							"key": "format",
+							"value": "geocodejson"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search by address parameters json",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/search?addressdetails=1&format=json&street=33 Germaniapromenade&city=Berlin&state=Berlin&country=Deutschland&postalcode=12347",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "addressdetails",
+							"value": "1"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						},
+						{
+							"key": "street",
+							"value": "33 Germaniapromenade"
+						},
+						{
+							"key": "city",
+							"value": "Berlin"
+						},
+						{
+							"key": "state",
+							"value": "Berlin"
+						},
+						{
+							"key": "country",
+							"value": "Deutschland"
+						},
+						{
+							"key": "postalcode",
+							"value": "12347"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search by simple address ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/search?addressdetails=1&format=json&q=Germania-Eck, 33, Germaniapromenade, Britz, Neukölln, Berlin, 12347, Deutschland",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "addressdetails",
+							"value": "1"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						},
+						{
+							"key": "q",
+							"value": "Germania-Eck, 33, Germaniapromenade, Britz, Neukölln, Berlin, 12347, Deutschland"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup by points json",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"lat\": 52.444761,\n        \"lon\": 13.4002923\n    },\n    {\n        \"lat\": 52.470678199999995,\n        \"lon\": 13.385307250760587\n    },\n    {\n        \"lat\": 52.4553875,\n        \"lon\": 13.384646\n    },\n    {\n        \"lat\": 52.460121,\n        \"lon\": 13.4300978\n    },\n    {\n        \"lat\": 52.4736603,\n        \"lon\": 13.4490417\n    },\n    {\n        \"lat\": 52.4695721,\n        \"lon\": 13.4386031\n    },\n    {\n        \"lat\": 52.4547942,\n        \"lon\": 13.3838337\n    },\n    {\n        \"lat\": 52.4738583,\n        \"lon\": 13.4507201\n    },\n    {\n        \"lat\": 52.4552139,\n        \"lon\": 13.383669\n    },\n    {\n        \"lat\": 52.4646403,\n        \"lon\": 13.4331266\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/lookup?format=geocodejson&addressdetails=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "geocodejson"
+						},
+						{
+							"key": "addressdetails",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup by points geocodejson",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"lat\": 52.444761,\n        \"lon\": 13.4002923\n    },\n    {\n        \"lat\": 52.470678199999995,\n        \"lon\": 13.385307250760587\n    },\n    {\n        \"lat\": 52.4553875,\n        \"lon\": 13.384646\n    },\n    {\n        \"lat\": 52.460121,\n        \"lon\": 13.4300978\n    },\n    {\n        \"lat\": 52.4736603,\n        \"lon\": 13.4490417\n    },\n    {\n        \"lat\": 52.4695721,\n        \"lon\": 13.4386031\n    },\n    {\n        \"lat\": 52.4547942,\n        \"lon\": 13.3838337\n    },\n    {\n        \"lat\": 52.4738583,\n        \"lon\": 13.4507201\n    },\n    {\n        \"lat\": 52.4552139,\n        \"lon\": 13.383669\n    },\n    {\n        \"lat\": 52.4646403,\n        \"lon\": 13.4331266\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/lookup?format=geocodejson&addressdetails=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "geocodejson"
+						},
+						{
+							"key": "addressdetails",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup all Unauthorized",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/lookup?format=geocodejson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "geocodejson"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup all Forbidden",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/lookup?format=geocodejson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "geocodejson"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lookup all",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user@gmail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/lookup?format=geocodejson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lookup"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "geocodejson"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
