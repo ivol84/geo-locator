@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.atanava.locator.service.OsmConstants.*;
@@ -65,17 +66,17 @@ public class OsmController {
 	}
 
 	@GetMapping("/lookup")
-	public ResponseEntity<ArrayNode> getByPoints(@RequestBody (required = false) PointId[] pointIds,
+	public ResponseEntity<ArrayNode> getByPoints(@RequestBody (required = false) Set<PointId> pointIds,
 												 @RequestParam(required = false) Integer addressdetails,
 												 @RequestParam(required = false) String format) {
-		log.info("Get addresses for points: {}", Arrays.toString(pointIds));
+		log.info("Get addresses for points: {}", pointIds);
 		format = getFormatOrDefault(format);
 
 		ArrayNode fetched;
-		if (pointIds == null) {
+		if (pointIds == null || pointIds.isEmpty()) {
 			fetched = osmService.getAll(format, addressdetails);
 		} else {
-			fetched = osmService.getByPointIds(format, addressdetails, Arrays.stream(pointIds).collect(Collectors.toSet()));
+			fetched = osmService.getByPointIds(format, addressdetails, pointIds);
 		}
 
 		return new ResponseEntity<>(fetched, HttpStatus.OK);

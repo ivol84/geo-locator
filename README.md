@@ -32,7 +32,16 @@ For further reference, please consider the following sections:
 
 #### Implementation and Settings:
 
-* Implemented fetching data from [Nominatim API](https://nominatim.org/release-docs/develop/api/Overview/) using json, jsonv2, geojson and geocodejson formats   
+* Implemented fetching data from [Nominatim API](https://nominatim.org/release-docs/develop/api/Overview/) using json, jsonv2, geojson and geocodejson formats 
+* For data fetching from Nominatim program uses only [Nominatim /search](https://nominatim.org/release-docs/develop/api/Search/) and [Nominatim /lookup](https://nominatim.org/release-docs/develop/api/Lookup/) 
+  because [Nominatim /reverse](https://nominatim.org/release-docs/develop/api/Reverse/) returns an imprecise, approximate result.  
+  And lookup for a single OSM object by its OSM id using [Nominatim /reverse](https://nominatim.org/release-docs/develop/api/Reverse/) is deprecated now by Nominatim.  
+  Instead of that, program generates OSM ID's using data in Nominatim response jsons and uses them to search by [Nominatim /lookup](https://nominatim.org/release-docs/develop/api/Lookup/)  
+  Client must not generate these OSM ID's itself, but can place  JSON request body in into request.   
+  This JSON request body must contain only points of coordinates in such format:  
+  `[{"lat": 52.444761,"lon": 13.4002923 }, {"lat": 52.470678199999995,"lon": 13.385307250760587 }, {"lat": 52.4553875,"lon": 13.384646 }]`  
+  Client also can send requests with empty or null set of points to receive all addresses by all stored coordinates.  
+  But this option is available only for users with `ADMIN` role
 * All response json data converted to own simple json, jsonv2, geojson and geocodejson formats (removed some metadata)  
 * Output of json, jsonv2 and geojson now is similar except of geocodejson.   
   Therefore `rating-cache.savememory` property was set as `true`. This option prevents from caching same data.   
