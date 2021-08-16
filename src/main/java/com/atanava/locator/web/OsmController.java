@@ -42,6 +42,7 @@ public class OsmController {
 		format = getFormatOrDefault(format);
 		ArrayNode created;
 		if (q != null) {
+			q = q.strip();
 			if (q.isEmpty()) {
 				throw new IllegalArgumentException("Address must not be empty or null");
 			}

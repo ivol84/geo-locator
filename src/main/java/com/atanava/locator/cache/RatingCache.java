@@ -27,10 +27,10 @@ public abstract class RatingCache<K, V> {
 	protected volatile int minRating;
 	@Getter	@Setter
 	protected volatile int batchSize;
-	@Getter	@Setter
+	@Getter
 	protected volatile boolean useGC;
 	@Getter @Setter
-	private boolean isMemorySaving;
+	private volatile boolean isMemorySaving;
 
 	public RatingCache() {
 	}
@@ -101,6 +101,12 @@ public abstract class RatingCache<K, V> {
 			}
 			lastEvicted.set(now);
 		}
+	}
+
+	public void setUseGC(boolean useGC) {
+		this.useGC = useGC;
+		if (useGC)
+			this.runtime = Runtime.getRuntime();
 	}
 
 	@AllArgsConstructor

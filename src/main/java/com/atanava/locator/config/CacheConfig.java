@@ -56,6 +56,5 @@ public class CacheConfig<K, V> {
         cache.setBatchSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("rating-cache.batchsize"))));
         cache.setUseGC(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("rating-cache.usegc"))));
         cache.setMemorySaving(Boolean.parseBoolean(Objects.requireNonNull(env.getProperty("rating-cache.savememory"))));
-        if (cache.isUseGC()) cache.setRuntime(Runtime.getRuntime());
     }
 }
