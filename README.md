@@ -59,3 +59,11 @@ For further reference, please consider the following sections:
 #### Run with Docker:   
 
 * `docker run -p8080:8080 atanava/geo-locator:beta`
+
+#### Heroku:
+
+* Use user and admin credentials from `data.sql` file
+* [Search bakery in Berlin json](https://atanava-geo-locator.herokuapp.com/api/search?addressdetails=1&q=bakery+in+berlin&format=json)
+* [Search by address parameters json](https://atanava-geo-locator.herokuapp.com/api/search?addressdetails=1&format=json&street=33+Germaniapromenade&city=Berlin&state=Berlin&country=Deutschland&postalcode=12347)
+* [Search by simple address](https://atanava-geo-locator.herokuapp.com/api/search?addressdetails=1&format=json&q=Germania-Eck,+33,+Germaniapromenade,+Britz,+Neukölln,+Berlin,+12347,+Deutschland)
+* [Lookup all](https://atanava-geo-locator.herokuapp.com/api/lookup?format=geocodejson) (for admin only)

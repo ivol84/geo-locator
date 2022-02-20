@@ -27,6 +27,9 @@ spring:
     active: multi-thread
 #    active: single-thread
 
+server:
+  port: ${PORT:8080} #for heroku
+
 rating-cache:
   lifetime: 60_000
   sleep: 10_000
