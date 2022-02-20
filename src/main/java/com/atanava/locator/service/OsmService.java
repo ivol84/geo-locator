@@ -90,8 +90,9 @@ public class OsmService {
 	}
 
 	private ArrayNode getByOsmIds(String format, Set<String> osmIds, boolean needToCache) {
-		if (osmIds.isEmpty())
-			throw new NoSuchElementException();
+		if (osmIds.isEmpty()) {
+			return mapper.createArrayNode();
+		}
 		String url = UrlBuilder.getUrl(format, osmIds);
 		ArrayNode source = osmProvider.get(url);
 		Map<PointTo, JsonNode> converted = JsonUtil.convertToMap(source, format, addressCache.isMemorySaving());
@@ -106,9 +107,9 @@ public class OsmService {
 	}
 
 	private PointTo getPointTo(Point point, String format) {
-		return  addressCache.isMemorySaving() ?
-				new PointTo(point.getPointId(), point.getOsmIds(), null, GEOCODE_JSON.equals(format))
-				: new PointTo(point.getPointId(), point.getOsmIds(), format, GEOCODE_JSON.equals(format));
+		return  addressCache.isMemorySaving()
+			? new PointTo(point.getPointId(), point.getOsmIds(), null, GEOCODE_JSON.equals(format))
+			: new PointTo(point.getPointId(), point.getOsmIds(), format, GEOCODE_JSON.equals(format));
 	}
 
 	private Set<String> getOsmIds(Collection<Point> points, String format) {
