@@ -54,4 +54,8 @@ For further reference, please consider the following sections:
 #### How to test:
 
 * Run application -> use `GeoLocator.postman_collection.json` to test for base cases in Postman
-* If you want to create custom requests or `curl`'s -> please use user and admin credentials from `data.sql` file
+* If you want to create custom requests or `curl`'s -> please use user and admin credentials from `data.sql` file  
+
+#### Run with Docker:   
+
+* `docker run -p8080:8080 atanava/geo-locator:beta`

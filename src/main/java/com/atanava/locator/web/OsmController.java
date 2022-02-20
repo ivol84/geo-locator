@@ -11,10 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.atanava.locator.service.OsmConstants.*;
 
@@ -42,13 +40,17 @@ public class OsmController {
 		format = getFormatOrDefault(format);
 		ArrayNode created;
 		if (q != null) {
-			if (q.strip().isEmpty()) {
+			q = q.strip();
+			if (q.isEmpty()) {
 				throw new IllegalArgumentException("Address must not be empty or null");
 			}
 			log.info("Create coordinates for address: {}", q);
+			q = q.replaceAll(" ", "+");
 			created = osmService.createOrUpdate(format, addressdetails, q);
 		} else {
-			log.info("Create coordinates for address: {}, {}, {}, {}, {}, {}", street, city, country1, state, country2, postalcode);
+			log.info("Create coordinates for address: {}, {}, {}, {}, {}, {}",
+				street, city, country1, state, country2, postalcode);
+
 			List<String> address = new ArrayList<>();
 			if (street != null) address.add(STREET + "=" + street);
 			if (city != null) address.add(CITY + "=" + city);

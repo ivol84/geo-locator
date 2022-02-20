@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.atanava</groupId>
-    <artifactId>locator</artifactId>
+    <artifactId>geo-locator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>GeoLocator</name>
     <description>OSM Address Locator via Nominatim API</description>
