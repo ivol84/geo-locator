@@ -1,3 +1,4 @@
+/** @QUESTION: Why are you using this package? */
 package com.atanava.locator;
 
 import com.atanava.locator.model.User;

@@ -20,6 +20,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RequiredArgsConstructor
+/**
+ * @QUESTION: Why you don't proxy beans?
+ */
 @Configuration(proxyBeanMethods = false)
 public class CacheConfig<K, V> {
 

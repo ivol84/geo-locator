@@ -1,7 +1,7 @@
 package com.atanava.locator.model;
 
 import org.springframework.security.core.GrantedAuthority;
-
+/** @QUESTION: Why did you not set ROLE_* using constructor */
 public enum Role implements GrantedAuthority {
 	USER,
 	ADMIN;

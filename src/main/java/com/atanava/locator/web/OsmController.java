@@ -37,6 +37,7 @@ public class OsmController {
 												  @RequestParam(required = false) Integer addressdetails,
 												  @RequestParam(required = false) String format) {
 
+		/** @QUESTION: May be content negatiation will be better??? */
 		format = getFormatOrDefault(format);
 		ArrayNode created;
 		if (q != null) {
